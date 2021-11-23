@@ -37,9 +37,19 @@ public class UserServiceImpl implements UserService{
             Post post = new Post(postDto.getPostTitle(),
                     postDto.getPostBody(),postDto.getImageUrls(),
                     foundUserRepo.get().getFullName());
-            foundUserRepo.get().setPosts(List.of(post));
+            User user = foundUserRepo.get();
+            user.addPost(post);
             return postServiceImpl.save(post);
         }
         throw new IllegalArgumentException("This user with Id " +userId+" is not registered");
     }
-}
+
+    @Override
+    public Post updatePost(Long userId, Long postId, PostDto toUpDatePostDto) {
+        Optional <User> userInRepo = userRepository.findById(userId);
+        if(userInRepo.isPresent()){
+            return postServiceImpl.updatePost(postId,toUpDatePostDto);
+            }
+        throw new IllegalArgumentException("This user does not exist");
+        }
+    }

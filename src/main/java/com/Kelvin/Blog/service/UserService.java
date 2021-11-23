@@ -8,4 +8,6 @@ public interface UserService {
     User createAndSaveUser(User user);
 
     Post createPost(Long userId, PostDto postDto);
+
+    Post updatePost(Long userId, Long postId, PostDto toUpDatePostDto);
 }

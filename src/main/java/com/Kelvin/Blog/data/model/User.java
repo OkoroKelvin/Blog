@@ -43,7 +43,7 @@ public class User {
 
 
     @OneToMany
-    private List<Post> posts = new ArrayList<Post>();
+    private List<Post> posts;
 
     public User(String firstName, String lastName, String phoneNumber, String email, String password) {
         this.firstName = firstName;
@@ -51,9 +51,14 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.posts = new ArrayList<Post>();
     }
 
     public String getFullName() {
         return this.firstName+" "+this.lastName;
+    }
+
+    public void addPost(Post post){
+        getPosts().add(post);
     }
 }

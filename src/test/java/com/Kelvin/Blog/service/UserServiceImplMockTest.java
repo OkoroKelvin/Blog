@@ -12,9 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 
@@ -61,6 +63,7 @@ class UserServiceImplMockTest {
                 .lastName("Jobs")
                 .email("Stevejobs@yahoo.com")
                 .password("123$%^")
+                .posts(new ArrayList<Post>())
                 .phoneNumber("08163091749").build();
 
         PostDto postDto = new PostDto();
@@ -76,8 +79,8 @@ class UserServiceImplMockTest {
 
         when(userRepository.save(user1)).thenReturn(user1);
         userServiceImpl.createAndSaveUser(user1);
-
         verify(userRepository, times(1)).save(user1);
+
         when(userRepository.findById(user1.getUserId())).thenReturn(Optional.of(user1));
         when(postRepository.save(post1)).thenReturn(post1);
         userServiceImpl.createPost(user1.getUserId(),postDto);
@@ -87,64 +90,58 @@ class UserServiceImplMockTest {
 
     @Test
     void userCanUpdatePostViaPostId(){
-
-
         User user1 = User.builder()
+                .userId(1L)
                 .firstName("Kelvin")
                 .lastName("Okoro")
                 .email("kelvin@yahoo.com")
                 .password("1234")
-                .phoneNumber("08163091749").build();
+                .phoneNumber("08163091749")
+                .posts(new ArrayList<Post>()).build();
 
-        User user2 = User.builder()
-                .firstName("John")
-                .lastName("Bush")
-                .email("okoro@yahoo.com")
-                .password("1234")
-                .phoneNumber("08175878390").build();
+        PostDto toUpDatePostDto = new PostDto();
+        toUpDatePostDto.setPostTitle("Chemistry Sociology");
+        toUpDatePostDto.setPostBody("The sociology of science");
+        toUpDatePostDto.setImageUrls(List.of("www.java.com","www.divine.com"));
 
-        User user3 = User.builder()
-                .firstName("Tolani")
-                .lastName("Eze")
-                .email("nike@yahoo.com")
-                .password("1234")
-                .phoneNumber("08163565267").build();
+        PostDto userPostDto = new PostDto();
+        userPostDto.setPostTitle("Biology");
+        userPostDto.setPostBody("Biology is the study of Life and its Environment");
+        userPostDto.setPostAuthorName(user1.getFullName());
+        userPostDto.setImageUrls(List.of("www.javelin.com","www.globalview.com"));
 
-
-        Post post1 = new Post("Chemistry","The study of chemistry of Life",
-                List.of("www.image.com","www.css.com"),user1.getFullName());
-
-        Post post2 = new Post("Biology Science","Bio comes from the world Life," +
-                "Logos comes from the word study. Therefore Biology is the Study of Life",
-                List.of("www.college.com","www.Buss.com"),user2.getFullName());
-
-        Post post3 = new Post("Chemistry technology","Bio comes from the world Life,Logos comes from the" +
-                "word study. Therefore Biology is the Study of Life",null,user3.getFullName());
-
-
-
-
-        PostDto postDto = new PostDto();
-        postDto.setPostTitle("Chemistry Sociology");
-        postDto.setPostBody("The sociology of science");
-        postDto.setPostAuthorName(user1.getFullName());
-        postDto.setImageUrls(List.of("www.java.com","www.divine.com"));
-
+        Post post = new Post();
+        post.setPostId(1L);
+        post.setPostTitle(userPostDto.getPostTitle());
+        post.setPostBody(userPostDto.getPostBody());
+        post.setAuthorFullName(user1.getFullName());
+        post.setImageUrls(userPostDto.getImageUrls());
 
 
         when(userRepository.save(user1)).thenReturn(user1);
         userServiceImpl.createAndSaveUser(user1);
-
         verify(userRepository, times(1)).save(user1);
+
         when(userRepository.findById(user1.getUserId())).thenReturn(Optional.of(user1));
-        when(postRepository.save(post1)).thenReturn(post1);
-        userServiceImpl.createPost(user1.getUserId(),postDto);
+        when(postRepository.save(post)).thenReturn(post);
+
+
+        userServiceImpl.createPost(user1.getUserId(),userPostDto);
         verify(userRepository,times(1)).findById(user1.getUserId());
-        verify(postRepository,times(1)).save(post1);
+        verify(postRepository,times(1)).save(any(Post.class));
 
-
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        when(postMapper.mapPostDtoToPost(toUpDatePostDto,post)).then(e -> {
+            post.setPostTitle(toUpDatePostDto.getPostTitle());
+            post.setPostBody(toUpDatePostDto.getPostBody());
+            return null;
+        });
+        userServiceImpl.updatePost(1L,1L,toUpDatePostDto);
+        verify(postRepository,times(1)).findById(any());
+        verify(postMapper, times(1)).mapPostDtoToPost(any(PostDto.class), any(Post.class));
+        assertThat(post.getPostTitle()).isEqualTo(toUpDatePostDto.getPostTitle());
 
     }
-
 
 }
