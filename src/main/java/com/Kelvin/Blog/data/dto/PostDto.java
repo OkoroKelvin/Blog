@@ -1,6 +1,5 @@
 package com.Kelvin.Blog.data.dto;
 
-import com.Kelvin.Blog.data.model.User;
 import lombok.Data;
 
 import java.util.List;
@@ -11,4 +10,6 @@ public class PostDto {
     private String postBody;
     private String postAuthorName;
     private List<String> imageUrls;
+
+
 }

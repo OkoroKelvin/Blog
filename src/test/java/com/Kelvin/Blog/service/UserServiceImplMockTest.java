@@ -1,6 +1,7 @@
 package com.Kelvin.Blog.service;
 
 import com.Kelvin.Blog.data.dto.PostDto;
+import com.Kelvin.Blog.data.model.Comment;
 import com.Kelvin.Blog.data.model.Post;
 import com.Kelvin.Blog.data.model.User;
 import com.Kelvin.Blog.data.repository.PostRepository;
@@ -141,6 +142,10 @@ class UserServiceImplMockTest {
         verify(postRepository,times(1)).findById(any());
         verify(postMapper, times(1)).mapPostDtoToPost(any(PostDto.class), any(Post.class));
         assertThat(post.getPostTitle()).isEqualTo(toUpDatePostDto.getPostTitle());
+    }
+    @Test
+    void userCanCommentOnPost(){
+
 
     }
 

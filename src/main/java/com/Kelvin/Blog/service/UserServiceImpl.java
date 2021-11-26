@@ -1,8 +1,10 @@
 package com.Kelvin.Blog.service;
 
 import com.Kelvin.Blog.data.dto.PostDto;
+import com.Kelvin.Blog.data.model.Comment;
 import com.Kelvin.Blog.data.model.Post;
 import com.Kelvin.Blog.data.model.User;
+import com.Kelvin.Blog.data.repository.CommentRepository;
 import com.Kelvin.Blog.data.repository.UserRepository;
 import com.Kelvin.Blog.service.mapper.PostMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,14 @@ public class UserServiceImpl implements UserService{
     PostMapper postMapper;
 
     @Autowired
+    CommentRepository commentRepository;
+
+    @Autowired
     public UserServiceImpl(UserRepository userRepository, PostService postServiceImpl,PostMapper postMapper) {
         this.userRepository = userRepository;
         this.postServiceImpl = postServiceImpl;
         this.postMapper= postMapper;
+        //this.commentRepository = commentRepository;
     }
 
     @Override
@@ -52,4 +58,14 @@ public class UserServiceImpl implements UserService{
             }
         throw new IllegalArgumentException("This user does not exist");
         }
+
+    @Override
+    public Comment makeComment(Long postId, Comment comment) {
+        Post post = postServiceImpl.findPostById(postId);
+        if(post!=null){
+            post.addAllComment(comment);
+            return commentRepository.save(comment);
+        }
+        return null;
     }
+}

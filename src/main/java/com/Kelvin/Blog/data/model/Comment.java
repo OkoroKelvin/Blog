@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -25,12 +24,19 @@ public class Comment {
     @Column(nullable = false,length=500)
     private String body;
 
-
+    @Column(nullable = false)
     private String creatorName;
 
-    private Long creatorId;
+    @ManyToOne
+    private Post post;
 
     @CreationTimestamp
     private Date dateOfComment;
+
+
+    public Comment(String name,String commentBody){
+        this.creatorName = name;
+        this.body=commentBody;
+    }
 
 }

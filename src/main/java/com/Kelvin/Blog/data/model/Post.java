@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,11 +46,24 @@ public class Post {
         this.postBody = postBody;
         this.imageUrls = imageUrls;
         this.authorFullName = authorFullName;
+        this.comments=new ArrayList<Comment>();
     }
 
     public Post(String postTitle, String postBody, String authorFullName) {
         this.postTitle = postTitle;
         this.postBody = postBody;
         this.authorFullName = authorFullName;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void addAllComment(Comment comment){
+        getComments().add(comment);
     }
 }
